@@ -10,6 +10,7 @@ LDGame.Preloader.prototype = {
 
         this.load.image("ocean", "assets/bg.png");
         this.load.image("land", "assets/country.png");
+        this.load.image("explosion", "assets/explosion.png");
     },
 
     create: function() {
