@@ -9,6 +9,7 @@ LDGame.Preloader.prototype = {
             "Loading...", { font: "32px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
 
         this.load.image("ocean", "assets/bg.png");
+        this.load.image("land", "assets/country.png");
     },
 
     create: function() {
