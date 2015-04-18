@@ -11,6 +11,7 @@ LDGame.Preloader.prototype = {
         this.load.image("ocean", "assets/bg.png");
         this.load.image("land", "assets/country.png");
         this.load.image("explosion", "assets/explosion.png");
+        this.load.image("ui", "assets/ui.png");
     },
 
     create: function() {
