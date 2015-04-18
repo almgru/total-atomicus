@@ -23,9 +23,6 @@ LDGame.Game.prototype = {
     },
 
     create: function() {
-        this.activePlayer
-        this.player = "europe";
-
         this.ocean = this.add.sprite(0, 0, "ocean");
 
         this.continents = [];
@@ -39,10 +36,19 @@ LDGame.Game.prototype = {
             this.continents[i].sprite.inputEnabled = true;
             this.continents[i].sprite.events.onInputDown.add(this.onDown, this);
         }
+
+        this.humanPlayer = "europe";
+        this.activePlayer = "europe";
+        this.activePlayerIndex = this.getIndexOf(this.activePlayer);
     },
 
     update: function() {
-
+        if (this.activePlayer !== this.humanPlayer) {
+            if (this.time.now > this.delay) {
+                this.makeAiAction();
+                this.nextPlayer();
+            }
+        }
     },
 
     render: function() {
@@ -50,6 +56,39 @@ LDGame.Game.prototype = {
     },
 
     onDown: function(sprite) {
-        sprite.hp--;
+        if (this.activePlayer === this.humanPlayer)
+            sprite.hp--;
+        this.nextPlayer();
+    },
+
+    getIndexOf: function(string) {
+        for (var i = 0; i < this.continents.length; i++) {
+            if (this.continents[i].name === string) {
+                return i;
+            }
+        }
+
+        return -1;
+    },
+
+    nextPlayer: function() {
+        this.activePlayerIndex++;
+        if (this.activePlayerIndex > this.continents.length - 1) {
+            this.activePlayerIndex = 0;
+        }
+        this.activePlayer = this.continents[this.activePlayerIndex].name;
+        this.delay = this.time.now + 3000;
+
+        console.log(this.activePlayer + "'s turn.");
+    },
+
+    makeAiAction: function() {
+        var rand = Math.floor(Math.random() * this.continents.length);
+        this.attack(this.continents[rand].name);
+    },
+
+    attack: function(string) {
+        this.continents[this.getIndexOf(string)].sprite.hp--;
+        console.log(this.activePlayer + " attacks " + string + "!");
     }
 };
