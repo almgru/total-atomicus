@@ -8,19 +8,23 @@ var Continent = function(game, x, y, id, name, hp) {
     this.hp = hp;
     this.name = name;
     this.tint = 0x00ff00;
+    this.atk = 1;
+    this.text = this.game.add.text(x, y, "HP: " + this.hp + "\nAtk: " + this.atk,
+        {font: "14px monospace", fill: "#000", align: "left"});
 };
 
 Continent.prototype = Object.create(Phaser.Sprite.prototype);
 Continent.prototype.constructor = Continent;
 
 Continent.prototype.update = function() {
-
+    this.text.bringToTop();
 };
 
 Continent.prototype.attack = function(string) {
-    console.log(this.name + " attacks " + string + "!");
+    console.log(this.name + " attacks " + string + " for " + this.atk + " damage!");
     var continent = this.game.continents[this.game.getIndexOf(string)];
-    continent.hp--;
+    continent.hp -= this.atk;
+    continent.updateText();
     var explosion = new Explosion(this.game, continent.x, continent.y, "explosion", 200);
     this.game.add.existing(explosion);
 
@@ -31,13 +35,37 @@ Continent.prototype.attack = function(string) {
     }
 };
 
-Continent.prototype.doAIAction = function() {
-    var rand = 0;
+Continent.prototype.buildDefence = function() {
+    this.hp += 2;
+    console.log(this.name + " restores 2 hp! It now has " + this.hp + "!");
+    this.updateText();
+};
 
-    do {
-        rand = Math.floor(Math.random() * this.game.continents.length);
-    } while (this.game.continents[rand].dead
+Continent.prototype.buildAttack = function() {
+    this.atk += 1;
+    console.log(this.name + " raises attack by 1 to " + this.atk + "!");
+    this.updateText();
+};
+
+Continent.prototype.doAIAction = function() {
+    var rand = this.game.rnd.integerInRange(0, 2);
+
+    if (rand === 0) {
+        do {
+            rand = this.game.rnd.integerInRange(0, this.game.continents.length - 1);
+        } while (this.game.continents[rand].dead
         || this.game.continents[rand] === this);
 
-    this.attack(this.game.continents[rand].name);
+        this.attack(this.game.continents[rand].name);
+    }
+    else if (rand === 1) {
+        this.buildDefence();
+    }
+    else {
+        this.buildAttack();
+    }
+};
+
+Continent.prototype.updateText = function() {
+    this.text.setText("HP: " + this.hp + "\nAtk: " + this.atk);
 };

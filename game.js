@@ -39,6 +39,14 @@ LDGame.Game.prototype = {
                 this.activePlayer.doAIAction();
                 this.nextPlayer();
             }
+        } else {
+            if (this.input.keyboard.isDown(Phaser.Keyboard.A)) {
+                this.activePlayer.buildAttack();
+                this.nextPlayer();
+            } else if (this.input.keyboard.isDown(Phaser.Keyboard.D)) {
+                this.activePlayer.buildDefence();
+                this.nextPlayer();
+            }
         }
     },
 
@@ -77,7 +85,7 @@ LDGame.Game.prototype = {
 
         this.activePlayer.tint = 0xffff00;
 
-        this.delay = this.time.now + 3000;
+        this.delay = this.time.now + 1500;
 
         console.log(this.activePlayer.name + "'s turn.");
     }
