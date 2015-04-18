@@ -14,6 +14,7 @@ LDGame.Game.prototype = {
 
     create: function() {
         this.ocean = this.add.sprite(0, 0, "ocean");
+        this.ui = this.add.sprite(0, 500, "ui_bar");
 
         this.continents = [];
         this.continents.push(new Continent(this, 10, 10, "land", "north america", 3));
@@ -27,24 +28,52 @@ LDGame.Game.prototype = {
             this.add.existing(this.continents[i]);
         }
 
-        this.humanPlayer = this.continents[1];
-        this.activePlayerIndex = this.getIndexOf("europe");
+        this.buttons = [];
+        this.buttons.push(this.add.sprite(200, 520, "missleUpgrade"));
+        this.buttons.push(this.add.sprite(350, 520, "defenceUpgrade"));
+        this.buttons.push(this.add.sprite(500, 520, "cityUpgrade"));
+        for (var i = 0; i < this.buttons.length; i++) {
+            this.buttons[i].inputEnabled = true;
+        }
+        this.buttons[0].events.onInputDown.add(function () {
+            if (this.activePlayer.isHuman()) {
+                this.activePlayer.buildAttack();
+                this.nextPlayer();
+            }
+        }, this);
+        this.buttons[1].events.onInputDown.add(function () {
+            if (this.activePlayer.isHuman()) {
+                this.activePlayer.buildDefence();
+                this.nextPlayer();
+            }
+        }, this);
+        this.buttons[2].events.onInputDown.add(function () {
+            if (this.activePlayer.isHuman()) {
+                this.activePlayer.buildCity();
+                this.nextPlayer();
+            }
+        }, this);
+
+        this.humanPlayers = [];
+        this.humanPlayers.push(this.continents[1]);
+        this.humanPlayers.push(this.continents[0]);
+        this.activePlayerIndex = this.rnd.integerInRange(0, this.continents.length -1);
         this.activePlayer = this.continents[this.activePlayerIndex];
-        this.activePlayer.tint = 0xffff00;
+        this.nextPlayer();
     },
 
     update: function() {
-        if (this.activePlayer !== this.humanPlayer) {
-            if (this.time.now > this.delay) {
-                this.activePlayer.doAIAction();
-                this.nextPlayer();
-            }
-        } else {
+        if (this.activePlayer.isHuman()) {
             if (this.input.keyboard.isDown(Phaser.Keyboard.A)) {
                 this.activePlayer.buildAttack();
                 this.nextPlayer();
             } else if (this.input.keyboard.isDown(Phaser.Keyboard.D)) {
                 this.activePlayer.buildDefence();
+                this.nextPlayer();
+            }
+        } else {
+            if (this.time.now > this.delay) {
+                this.activePlayer.doAIAction();
                 this.nextPlayer();
             }
         }
@@ -87,6 +116,6 @@ LDGame.Game.prototype = {
 
         this.delay = this.time.now + 1500;
 
-        console.log(this.activePlayer.name + "'s turn.");
+        console.log(this.activePlayer.name + "'s turn." + (this.activePlayer.isHuman() ? " (Player)" : ""));
     }
 };

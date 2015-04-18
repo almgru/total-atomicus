@@ -9,8 +9,11 @@ var Continent = function(game, x, y, id, name, hp) {
     this.name = name;
     this.tint = 0x00ff00;
     this.atk = 1;
-    this.text = this.game.add.text(x, y, "HP: " + this.hp + "\nAtk: " + this.atk,
-        {font: "14px monospace", fill: "#000", align: "left"});
+    this.cities = 1;
+    this.text = this.game.add.text(x, y, "HP: " + this.hp + "\nAtk: " +
+        this.atk + "\nCities: " + this.cities,
+        {font: "14px monospace", fill: "#000", align: "center"});
+    this.aggressors = [];
 };
 
 Continent.prototype = Object.create(Phaser.Sprite.prototype);
@@ -24,6 +27,7 @@ Continent.prototype.attack = function(string) {
     console.log(this.name + " attacks " + string + " for " + this.atk + " damage!");
     var continent = this.game.continents[this.game.getIndexOf(string)];
     continent.hp -= this.atk;
+
     continent.updateText();
     var explosion = new Explosion(this.game, continent.x, continent.y, "explosion", 200);
     this.game.add.existing(explosion);
@@ -36,19 +40,25 @@ Continent.prototype.attack = function(string) {
 };
 
 Continent.prototype.buildDefence = function() {
-    this.hp += 2;
-    console.log(this.name + " restores 2 hp! It now has " + this.hp + "!");
+    this.hp += 1 + this.cities;
+    console.log(this.name + " restores " + (1 + this.cities) + " hp!");
     this.updateText();
 };
 
 Continent.prototype.buildAttack = function() {
-    this.atk += 1;
-    console.log(this.name + " raises attack by 1 to " + this.atk + "!");
+    this.atk += this.cities;
+    console.log(this.name + " raises attack by " + this.cities + "!");
+    this.updateText();
+};
+
+Continent.prototype.buildCity = function() {
+    this.cities++;
+    console.log(this.name + " builds a city!");
     this.updateText();
 };
 
 Continent.prototype.doAIAction = function() {
-    var rand = this.game.rnd.integerInRange(0, 2);
+    var rand = this.game.rnd.integerInRange(0, 3);
 
     if (rand === 0) {
         do {
@@ -61,11 +71,31 @@ Continent.prototype.doAIAction = function() {
     else if (rand === 1) {
         this.buildDefence();
     }
+    else if (rand === 2) {
+        this.buildCity();
+    }
     else {
         this.buildAttack();
     }
 };
 
 Continent.prototype.updateText = function() {
-    this.text.setText("HP: " + this.hp + "\nAtk: " + this.atk);
+    this.text.setText("HP: " + this.hp + "\nAtk: " + this.atk + "\nCities: " + this.cities);
+};
+
+Continent.prototype.isHuman = function() {
+    for (var i = 0; i < this.game.humanPlayers.length; i++) {
+        if (this === this.game.humanPlayers[i]) {
+            return true;
+        }
+    }
+    return false;
+};
+
+Continent.prototype.addAggressor = function(attacker) {
+    if (this.aggressors.indexOf(attacker) === -1) {
+        this.aggressors.push({continent: attacker, hate: 1});
+    } else {
+        this.aggressors[this.aggressors.indexOf(attacker)].hate += 1;
+    }
 };

@@ -11,7 +11,10 @@ LDGame.Preloader.prototype = {
         this.load.image("ocean", "assets/bg.png");
         this.load.image("land", "assets/country.png");
         this.load.image("explosion", "assets/explosion.png");
-        this.load.image("ui", "assets/ui.png");
+        this.load.image("ui_bar", "assets/ui.png");
+        this.load.image("missleUpgrade", "assets/upgrade_missles_button.png");
+        this.load.image("defenceUpgrade", "assets/upgrade_defence_button.png");
+        this.load.image("cityUpgrade", "assets/upgrade_cities_button.png");
     },
 
     create: function() {
