@@ -84,21 +84,10 @@ LDGame.Game.prototype = {
     },
 
     onDown: function(sprite) {
-        if (this.activePlayer === this.humanPlayer) {
-            this.activePlayer.attack(sprite.name);
+        if (this.activePlayer.isHuman()) {
+            this.activePlayer.attack(sprite);
             this.nextPlayer();
         }
-    },
-
-    getIndexOf: function(string) {
-        for (var i = 0; i < this.continents.length; i++) {
-            if (this.continents[i].name === string) {
-                return i;
-            }
-        }
-
-        console.log("Could not get value of " + string);
-        return -1;
     },
 
     nextPlayer: function() {

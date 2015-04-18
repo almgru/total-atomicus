@@ -23,11 +23,10 @@ Continent.prototype.update = function() {
     this.text.bringToTop();
 };
 
-Continent.prototype.attack = function(string) {
-    console.log(this.name + " attacks " + string + " for " + this.atk + " damage!");
-    var continent = this.game.continents[this.game.getIndexOf(string)];
+Continent.prototype.attack = function(continent) {
+    console.log(this.name + " attacks " + continent.name + " for " + this.atk + " damage!");
     continent.hp -= this.atk;
-
+    continent.addAggressor(this);
     continent.updateText();
     var explosion = new Explosion(this.game, continent.x, continent.y, "explosion", 200);
     this.game.add.existing(explosion);
@@ -58,24 +57,24 @@ Continent.prototype.buildCity = function() {
 };
 
 Continent.prototype.doAIAction = function() {
-    var rand = this.game.rnd.integerInRange(0, 3);
+    var action = this.evaluateAction();
+    switch (action)
+    {
+        case 0:
+            this.attack(this.evaluateTarget());
+            break;
 
-    if (rand === 0) {
-        do {
-            rand = this.game.rnd.integerInRange(0, this.game.continents.length - 1);
-        } while (this.game.continents[rand].dead
-        || this.game.continents[rand] === this);
+        case 1:
+            this.buildCity();
+            break;
 
-        this.attack(this.game.continents[rand].name);
-    }
-    else if (rand === 1) {
-        this.buildDefence();
-    }
-    else if (rand === 2) {
-        this.buildCity();
-    }
-    else {
-        this.buildAttack();
+        case 2:
+            this.buildAttack();
+            break;
+
+        case 3:
+            this.buildDefence();
+            break;
     }
 };
 
@@ -98,4 +97,87 @@ Continent.prototype.addAggressor = function(attacker) {
     } else {
         this.aggressors[this.aggressors.indexOf(attacker)].hate += 1;
     }
+};
+
+Continent.prototype.evaluateAction = function() {
+    for (var i = 0; i < this.game.continents.length; i++) {
+        if (this === this.game.continents[i]
+                || this.game.continents[i].dead) {
+            continue;
+        } else if (this.hp <= this.game.continents[i].atk
+                && this.game.rnd.integerInRange(0, 100) > 25) {
+            return 3;
+        } else if (this.game.continents[i].hp <= this.atk
+            && this.game.rnd.integerInRange(0, 100) > 25) {
+            return 0;
+        }
+    }
+
+    return (this.game.rnd.integerInRange(0, 3));
+};
+
+Continent.prototype.evaluateTarget = function() {
+    var hits = 0;
+    var lowestHP = 100;
+    var lowestHPIndex = -1;
+    var highestAggression = 0;
+    var aggressionIndex = -1;
+
+    for (var i = 0; i < this.game.continents.length; i++) {
+        if (this === this.game.continents[i]
+                || this.game.continents[i].dead) {
+            continue;
+        } else if (this.game.continents[i].hp < lowestHP
+                && this.game.continents[i].hp <= this.atk) {
+            hits++;
+            lowestHP = this.game.continents[i].hp;
+            lowestHPIndex = i;
+            var j;
+            if ((j = this.aggressorIndexOf()) !== -1) {
+                if (this.aggressors[i].hate > highestAggression) {
+                    highestAggression = this.aggressors[j].hate;
+                    aggressionIndex = i;
+                }
+            }
+        }
+    }
+
+    if (hits === 1) {
+        return this.game.continents[lowestHPIndex];
+    } else if (hits > 1) {
+        if (aggressionIndex !== -1) {
+            return this.game.continents[aggressionIndex];
+        } else {
+            return this.selectRandomTarget();
+        }
+    } else {
+        return this.selectRandomTarget();
+    }
+};
+
+Continent.prototype.selectRandomTarget = function() {
+    do {
+        var rand = this.game.rnd.integerInRange(0, this.game.continents.length - 1);
+    } while (this.game.continents[rand].dead
+    || this.game.continents[rand] === this);
+
+    return (this.game.continents[rand]);
+};
+
+Continent.prototype.aggressorIndexOf = function(continent) {
+    for (var i = 0; i < this.game.continents.length; i++) {
+
+        if (this.game.continents[i] === this
+                || this.game.continents[i].dead) {
+            continue;
+        }
+
+        for (var j = 0; j < this.aggressors.length; j++) {
+            if (this.game.continents[i] === this.aggressors[j].continent) {
+                return j;
+            }
+        }
+    }
+
+    return -1;
 };
