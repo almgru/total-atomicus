@@ -20,9 +20,9 @@ LDGame.Game.prototype = {
 
         this.continents = [];
         this.continents.push(new Continent(this, 10, 10, "land", "north america", 3));
-        this.continents.push(new Continent(this, 400, 10, "europeimg", "europe", 3));
-        this.continents.push(new Continent(this, 509, 10, "asiaimg", "asia", 3));
-        this.continents.push(new Continent(this, 400, 250, "africaimg", "africa", 3));
+        this.continents.push(new Continent(this, 400, 50, "europeimg", "europe", 3));
+        this.continents.push(new Continent(this, 509, 50, "asiaimg", "asia", 3));
+        this.continents.push(new Continent(this, 346, 216, "africaimg", "africa", 3));
         this.continents.push(new Continent(this, 80, 300, "land", "south america", 3));
         for (var i = 0; i < this.continents.length; i++) {
             this.continents[i].inputEnabled = true;

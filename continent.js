@@ -9,9 +9,10 @@ var Continent = function(game, x, y, id, name, hp) {
     this.name = name;
     this.atk = 1;
     this.cities = 1;
-    this.text = this.game.add.text(x, y, "HP: " + this.hp + "\nAtk: " +
+    this.text = this.game.add.text(x + this.width / 2, y + this.height / 2, "HP: " + this.hp + "\nAtk: " +
         this.atk + "\nCities: " + this.cities,
         {font: "14px monospace", fill: "#000", align: "center"});
+    this.text.anchor.setTo(0.5, 0.5);
     this.aggressors = [];
 };
 
