@@ -1,3 +1,8 @@
+"use strict";
+/**
+ * Created by teh_daniel_37 on 4/18/15.
+ */
+
 window.onload = function() {
     var game = new Phaser.Game(800, 600, Phaser.AUTO, "gamecontainer");
 

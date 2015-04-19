@@ -105,10 +105,10 @@ Continent.prototype.evaluateAction = function() {
                 || this.game.continents[i].dead) {
             continue;
         } else if (this.hp <= this.game.continents[i].atk
-                && this.game.rnd.integerInRange(0, 100) > 25) {
+                && this.game.rnd.integerInRange(0, 100) < 75) {
             return 3;
         } else if (this.game.continents[i].hp <= this.atk
-            && this.game.rnd.integerInRange(0, 100) > 25) {
+            && this.game.rnd.integerInRange(0, 100) < 75) {
             return 0;
         }
     }
@@ -165,17 +165,10 @@ Continent.prototype.selectRandomTarget = function() {
 };
 
 Continent.prototype.aggressorIndexOf = function(continent) {
-    for (var i = 0; i < this.game.continents.length; i++) {
 
-        if (this.game.continents[i] === this
-                || this.game.continents[i].dead) {
-            continue;
-        }
-
-        for (var j = 0; j < this.aggressors.length; j++) {
-            if (this.game.continents[i] === this.aggressors[j].continent) {
-                return j;
-            }
+    for (var j = 0; j < this.aggressors.length; j++) {
+        if (continent === this.aggressors[j].continent) {
+            return j;
         }
     }
 

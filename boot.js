@@ -1,3 +1,8 @@
+"use strict";
+/**
+ * Created by teh_daniel_37 on 4/18/15.
+ */
+
 var LDGame = {
 
 };

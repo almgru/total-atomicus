@@ -1,3 +1,8 @@
+"use strict";
+/**
+ * Created by teh_daniel_37 on 4/18/15.
+ */
+
 LDGame.Preloader = function(game) {
 
 };
@@ -15,6 +20,7 @@ LDGame.Preloader.prototype = {
         this.load.image("missleUpgrade", "assets/upgrade_missles_button.png");
         this.load.image("defenceUpgrade", "assets/upgrade_defence_button.png");
         this.load.image("cityUpgrade", "assets/upgrade_cities_button.png");
+        this.load.image("launchButton", "assets/launch_button.png");
     },
 
     create: function() {
