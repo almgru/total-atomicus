@@ -8,6 +8,7 @@ window.onload = function() {
 
     game.state.add("Boot", LDGame.Boot);
     game.state.add("Preloader", LDGame.Preloader);
+    game.state.add("Menu", LDGame.Menu);
     game.state.add("Game", LDGame.Game);
 
     game.state.start("Boot");
