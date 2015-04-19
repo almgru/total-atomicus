@@ -7,7 +7,6 @@ var Continent = function(game, x, y, id, name, hp) {
 
     this.hp = hp;
     this.name = name;
-    this.tint = 0x00ff00;
     this.atk = 1;
     this.cities = 1;
     this.text = this.game.add.text(x, y, "HP: " + this.hp + "\nAtk: " +

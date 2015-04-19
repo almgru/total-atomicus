@@ -14,6 +14,9 @@ LDGame.Preloader.prototype = {
             "Loading...", { font: "32px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
 
         this.load.image("ocean", "assets/bg.png");
+        this.load.image("africaimg", "assets/africa_low_res.png");
+        this.load.image("europeimg", "assets/europe_low_res.png");
+        this.load.image("asiaimg", "assets/asia_low_res.png");
         this.load.image("land", "assets/country.png");
         this.load.image("explosion", "assets/explosion.png");
         this.load.image("ui_bar", "assets/ui.png");

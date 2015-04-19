@@ -20,9 +20,9 @@ LDGame.Game.prototype = {
 
         this.continents = [];
         this.continents.push(new Continent(this, 10, 10, "land", "north america", 3));
-        this.continents.push(new Continent(this, 400, 10, "land", "europe", 3));
-        this.continents.push(new Continent(this, 600, 180, "land", "asia", 3));
-        this.continents.push(new Continent(this, 400, 250, "land", "africa", 3));
+        this.continents.push(new Continent(this, 400, 10, "europeimg", "europe", 3));
+        this.continents.push(new Continent(this, 509, 10, "asiaimg", "asia", 3));
+        this.continents.push(new Continent(this, 400, 250, "africaimg", "africa", 3));
         this.continents.push(new Continent(this, 80, 300, "land", "south america", 3));
         for (var i = 0; i < this.continents.length; i++) {
             this.continents[i].inputEnabled = true;
@@ -38,27 +38,29 @@ LDGame.Game.prototype = {
         for (var i = 0; i < this.buttons.length; i++) {
             this.buttons[i].inputEnabled = true;
         }
+
         this.buttons[0].events.onInputDown.add(function () {
+            if (this.activePlayer.isHuman()) {
+                this.launchReady = true;
+                console.log("Preparing missle launch. Select target.");
+            }
+        }, this);
+        this.buttons[1].events.onInputDown.add(function () {
             if (this.activePlayer.isHuman()) {
                 this.activePlayer.buildAttack();
                 this.nextPlayer();
             }
         }, this);
-        this.buttons[1].events.onInputDown.add(function () {
+        this.buttons[2].events.onInputDown.add(function () {
             if (this.activePlayer.isHuman()) {
                 this.activePlayer.buildDefence();
                 this.nextPlayer();
             }
         }, this);
-        this.buttons[2].events.onInputDown.add(function () {
+        this.buttons[3].events.onInputDown.add(function () {
             if (this.activePlayer.isHuman()) {
                 this.activePlayer.buildCity();
                 this.nextPlayer();
-            }
-        }, this);
-        this.buttons[3].events.onInputDown.add(function () {
-            if (this.activePlayer.isHuman()) {
-                this.launchReady = true;
             }
         }, this);
 
@@ -106,8 +108,6 @@ LDGame.Game.prototype = {
     },
 
     nextPlayer: function() {
-        this.activePlayer.tint = 0x00ff00;
-
         do {
             this.activePlayerIndex++;
 
@@ -118,7 +118,6 @@ LDGame.Game.prototype = {
             this.activePlayer = this.continents[this.activePlayerIndex];
         } while (this.activePlayer.dead);
 
-        this.activePlayer.tint = 0xffff00;
         this.delay = this.time.now + 1500;
         console.log(this.activePlayer.name + "'s turn." + (this.activePlayer.isHuman() ? " (Player)" : ""));
     }
