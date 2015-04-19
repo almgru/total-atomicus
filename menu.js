@@ -9,15 +9,32 @@ LDGame.Menu = function(game) {
 LDGame.Menu.prototype = {
 
     create: function() {
-        this.add.text(this.game.width / 2, this.game.height / 3,
+        this.add.sprite(0, 0, "menubg");
+        this.add.text(this.game.width / 2, this.game.height / 4,
             "Terminal", { font: "32px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
-        this.add.text(this.game.width / 2, this.game.height / 2,
-            "Press 'Enter' to start", { font: "24px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
+
+        this.singlePlayerButton = this.add.button(this.game.width / 2, this.game.height / 2, "menubutton",
+            this.singlePlayer, this, 0, 0, 1);
+        this.singlePlayerButton.anchor.setTo(0.5, 0.5);
+        this.add.text(this.game.width / 2, this.game.height / 2 + 1,
+            "Single Player", { font: "12px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
+
+        this.multiPlayerButton = this.add.button(this.game.width / 2, this.game.height / 2 + 80, "menubutton",
+            this.multiplayer, this, 0, 0, 1);
+        this.multiPlayerButton.anchor.setTo(0.5, 0.5);
+        this.add.text(this.game.width / 2, this.game.height / 2 + 81,
+            "Multiplayer", { font: "12px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
     },
 
     update: function() {
-        if (this.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
-            this.state.start("Game");
-        }
+
+    },
+
+    singlePlayer: function() {
+        this.state.start("SinglePlayer");
+    },
+
+    multiplayer: function() {
+        this.state.start("Multiplayer");
     }
 };

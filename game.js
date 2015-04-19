@@ -65,7 +65,15 @@ LDGame.Game.prototype = {
         }, this);
 
         this.humanPlayers = [];
-        this.humanPlayers.push(this.continents[1]);
+
+        for (var i = 0; i < this.game.players.length; i++) {
+            for (var j = 0; j < this.continents.length; j++) {
+                if (this.game.players[i] === this.continents[j].name) {
+                    this.humanPlayers.push(this.continents[j]);
+                }
+            }
+        }
+
         this.activePlayerIndex = this.rnd.integerInRange(0, this.continents.length -1);
         this.activePlayer = this.continents[this.activePlayerIndex];
         this.nextPlayer();

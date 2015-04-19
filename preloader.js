@@ -14,6 +14,7 @@ LDGame.Preloader.prototype = {
             "Loading...", { font: "32px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
 
         this.load.image("ocean", "assets/bg.png");
+        this.load.image("menubg", "assets/menu_bg.png");
         this.load.image("africaimg", "assets/africa_low_res.png");
         this.load.image("europeimg", "assets/europe_low_res.png");
         this.load.image("asiaimg", "assets/asia_low_res.png");
@@ -25,6 +26,7 @@ LDGame.Preloader.prototype = {
         this.load.image("defenceUpgrade", "assets/upgradedefencebutton.png");
         this.load.image("cityUpgrade", "assets/upgradefactorybutton.png");
         this.load.image("launchButton", "assets/launchbutton.png");
+        this.load.spritesheet("menubutton", "assets/button.png", 120, 40);
     },
 
     create: function() {

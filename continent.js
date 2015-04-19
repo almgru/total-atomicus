@@ -9,10 +9,10 @@ var Continent = function(game, x, y, id, name, hp) {
     this.name = name;
     this.atk = 1;
     this.cities = 1;
-    this.text = this.game.add.text(x + this.width / 2, y + this.height / 2, "HP: " + this.hp + "\nAtk: " +
-        this.atk + "\nCities: " + this.cities,
-        {font: "14px monospace", fill: "#000", align: "center"});
-    this.text.anchor.setTo(0.5, 0.5);
+    //this.text = this.game.add.text(x + this.width / 2, y + this.height / 2, "HP: " + this.hp + "\nAtk: " +
+    //    this.atk + "\nCities: " + this.cities,
+    //    {font: "14px monospace", fill: "#000", align: "center"});
+    //this.text.anchor.setTo(0.5, 0.5);
     this.aggressors = [];
 };
 
@@ -20,7 +20,7 @@ Continent.prototype = Object.create(Phaser.Sprite.prototype);
 Continent.prototype.constructor = Continent;
 
 Continent.prototype.update = function() {
-    this.text.bringToTop();
+    //this.text.bringToTop();
 };
 
 Continent.prototype.attack = function(continent) {
@@ -79,7 +79,7 @@ Continent.prototype.doAIAction = function() {
 };
 
 Continent.prototype.updateText = function() {
-    this.text.setText("HP: " + this.hp + "\nAtk: " + this.atk + "\nCities: " + this.cities);
+    //this.text.setText("HP: " + this.hp + "\nAtk: " + this.atk + "\nCities: " + this.cities);
 };
 
 Continent.prototype.isHuman = function() {
