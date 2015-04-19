@@ -14,16 +14,16 @@ LDGame.Game.prototype = {
 
     create: function() {
         this.ocean = this.add.sprite(0, 0, "ocean");
-        this.ui = this.add.sprite(0, 500, "ui_bar").tint = 0x0f0f0f;
+        this.ui = this.add.sprite(0, 500, "ui_bar").tint = 0x808080;
 
         this.launchReady = false;
 
         this.continents = [];
-        this.continents.push(new Continent(this, 10, 10, "land", "north america", 3));
+        this.continents.push(new Continent(this, 10, 50, "northamericaimg", "north america", 3));
         this.continents.push(new Continent(this, 400, 50, "europeimg", "europe", 3));
         this.continents.push(new Continent(this, 509, 50, "asiaimg", "asia", 3));
         this.continents.push(new Continent(this, 346, 216, "africaimg", "africa", 3));
-        this.continents.push(new Continent(this, 80, 300, "land", "south america", 3));
+        this.continents.push(new Continent(this, 160, 250, "southamericaimg", "south america", 3));
         for (var i = 0; i < this.continents.length; i++) {
             this.continents[i].inputEnabled = true;
             this.continents[i].events.onInputDown.add(this.onDown, this);

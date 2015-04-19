@@ -17,13 +17,14 @@ LDGame.Preloader.prototype = {
         this.load.image("africaimg", "assets/africa_low_res.png");
         this.load.image("europeimg", "assets/europe_low_res.png");
         this.load.image("asiaimg", "assets/asia_low_res.png");
-        this.load.image("land", "assets/country.png");
+        this.load.image("northamericaimg", "assets/north_america_low_res.png");
+        this.load.image("southamericaimg", "assets/south_america_low_res.png");
         this.load.image("explosion", "assets/explosion.png");
         this.load.image("ui_bar", "assets/ui.png");
-        this.load.image("missleUpgrade", "assets/upgrade_missles_button.png");
-        this.load.image("defenceUpgrade", "assets/upgrade_defence_button.png");
-        this.load.image("cityUpgrade", "assets/upgrade_cities_button.png");
-        this.load.image("launchButton", "assets/launch_button.png");
+        this.load.image("missleUpgrade", "assets/missileupgradebutton.png");
+        this.load.image("defenceUpgrade", "assets/upgradedefencebutton.png");
+        this.load.image("cityUpgrade", "assets/upgradefactorybutton.png");
+        this.load.image("launchButton", "assets/launchbutton.png");
     },
 
     create: function() {
