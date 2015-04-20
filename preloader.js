@@ -22,7 +22,7 @@ LDGame.Preloader.prototype = {
         this.load.image("northamericaimg", "assets/north_america_low_res.png");
         this.load.image("southamericaimg", "assets/south_america_low_res.png");
         this.load.image("turnborder", "assets/turn.png");
-        this.load.image("explosion", "assets/explosion.png");
+        this.load.spritesheet("explosion", "assets/explosion.png", 64, 64);
         this.load.image("ui_bar", "assets/ui.png");
         this.load.image("missleUpgrade", "assets/missileupgradebutton.png");
         this.load.image("defenceUpgrade", "assets/upgradedefencebutton.png");

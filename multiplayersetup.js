@@ -20,7 +20,7 @@ LDGame.MultiplayerSetup.prototype = {
         this.africaButton = this.add.button(this.game.width / 2, this.game.height / 2 - 60, "menubutton",
             function()
             {
-                this.game.players.push("africa");
+                this.game.players.push("Africa");
                 this.africaButton.inputEnabled = false;
                 this.updateText(-60);
             }, this, 0, 0, 1);
@@ -31,7 +31,7 @@ LDGame.MultiplayerSetup.prototype = {
         this.asiaButton = this.add.button(this.game.width / 2, this.game.height / 2, "menubutton",
             function()
             {
-                this.game.players.push("asia");
+                this.game.players.push("Asia");
                 this.asiaButton.inputEnabled = false;
                 this.updateText(0);
             }, this, 0, 0, 1);
@@ -42,7 +42,7 @@ LDGame.MultiplayerSetup.prototype = {
         this.europeButton = this.add.button(this.game.width / 2, this.game.height / 2 + 60, "menubutton",
             function()
             {
-                this.game.players.push("europe");
+                this.game.players.push("Europe");
                 this.europeButton.inputEnabled = false;
                 this.updateText(60);
             }, this, 0, 0, 1);
@@ -53,7 +53,7 @@ LDGame.MultiplayerSetup.prototype = {
         this.northAmerica = this.add.button(this.game.width / 2, this.game.height / 2 + 120, "menubutton",
             function()
             {
-                this.game.players.push("north america");
+                this.game.players.push("North America");
                 this.northAmerica.inputEnabled = false;
                 this.updateText(120);
             }, this, 0, 0, 1);
@@ -64,7 +64,7 @@ LDGame.MultiplayerSetup.prototype = {
         this.southAmerica = this.add.button(this.game.width / 2, this.game.height / 2 + 180, "menubutton",
             function()
             {
-                this.game.players.push("south america");
+                this.game.players.push("South America");
                 this.southAmerica.inputEnabled = false;
                 this.updateText(180);
             }, this, 0, 0, 1);

@@ -24,15 +24,15 @@ LDGame.Game.prototype = {
         this.launchReady = false;
 
         this.continents = [];
-        this.continents.push(new Continent(this, 10, 50, "northamericaimg", "north america", 3));
+        this.continents.push(new Continent(this, 10, 50, "northamericaimg", "North America", 3));
         this.continents[0].setInfo(-10, -50);
-        this.continents.push(new Continent(this, 400, 50, "europeimg", "europe", 3));
+        this.continents.push(new Continent(this, 400, 50, "europeimg", "Europe", 3));
         this.continents[1].setInfo(-50, -50);
-        this.continents.push(new Continent(this, 509, 50, "asiaimg", "asia", 3));
+        this.continents.push(new Continent(this, 509, 50, "asiaimg", "Asia", 3));
         this.continents[2].setInfo(120, 150);
-        this.continents.push(new Continent(this, 346, 216, "africaimg", "africa", 3));
+        this.continents.push(new Continent(this, 346, 216, "africaimg", "Africa", 3));
         this.continents[3].setInfo(-50, 75);
-        this.continents.push(new Continent(this, 160, 250, "southamericaimg", "south america", 3));
+        this.continents.push(new Continent(this, 160, 250, "southamericaimg", "South America", 3));
         this.continents[4].setInfo(-120, 50);
         for (var i = 0; i < this.continents.length; i++) {
             this.continents[i].inputEnabled = true;

@@ -16,7 +16,7 @@ LDGame.SinglePlayerSetup.prototype = {
         this.africaButton = this.add.button(this.game.width / 2, this.game.height / 2 - 60, "menubutton",
             function()
             {
-                this.game.players.push("africa");
+                this.game.players.push("Africa");
                 this.startGame();
             }, this, 0, 0, 1);
         this.africaButton.anchor.setTo(0.5, 0.5);
@@ -26,7 +26,7 @@ LDGame.SinglePlayerSetup.prototype = {
         this.asiaButton = this.add.button(this.game.width / 2, this.game.height / 2, "menubutton",
             function()
             {
-                this.game.players.push("asia");
+                this.game.players.push("Asia");
                 this.startGame();
             }, this, 0, 0, 1);
         this.asiaButton.anchor.setTo(0.5, 0.5);
@@ -36,7 +36,7 @@ LDGame.SinglePlayerSetup.prototype = {
         this.europeButton = this.add.button(this.game.width / 2, this.game.height / 2 + 60, "menubutton",
             function()
             {
-                this.game.players.push("europe");
+                this.game.players.push("Europe");
                 this.startGame();
             }, this, 0, 0, 1);
         this.europeButton.anchor.setTo(0.5, 0.5);
@@ -46,7 +46,7 @@ LDGame.SinglePlayerSetup.prototype = {
         this.northAmerica = this.add.button(this.game.width / 2, this.game.height / 2 + 120, "menubutton",
             function()
             {
-                this.game.players.push("north america");
+                this.game.players.push("North America");
                 this.startGame();
             }, this, 0, 0, 1);
         this.northAmerica.anchor.setTo(0.5, 0.5);
@@ -56,7 +56,7 @@ LDGame.SinglePlayerSetup.prototype = {
         this.southAmerica = this.add.button(this.game.width / 2, this.game.height / 2 + 180, "menubutton",
             function()
             {
-                this.game.players.push("south america");
+                this.game.players.push("South America");
                 this.startGame();
             }, this, 0, 0, 1);
         this.southAmerica.anchor.setTo(0.5, 0.5);

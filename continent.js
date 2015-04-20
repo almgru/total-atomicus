@@ -68,8 +68,11 @@ Continent.prototype.attack = function(continent) {
     continent.hp -= this.atk;
     continent.addAggressor(this);
     continent.updateText();
-    var explosion = new Explosion(this.game, continent.x + continent.width / 2, continent.y + continent.height / 2, "explosion", 200);
-    this.game.add.existing(explosion);
+    var explosion = this.game.add.sprite(continent.x + continent.width / 2, continent.y + continent.height / 2, "explosion");
+    explosion.lifespan = 600;
+    explosion.animations.add("explode");
+    explosion.anchor.setTo(0.5, 0.5);
+    explosion.animations.play("explode", 10, false);
 
     if (continent.hp <= 0) {
         console.log(continent.name + " is destroyed!");
@@ -114,6 +117,7 @@ Continent.prototype.doAIAction = function() {
     switch (action)
     {
         case 0:
+        case 4:
             this.attack(this.evaluateTarget());
             break;
 
@@ -166,7 +170,7 @@ Continent.prototype.evaluateAction = function() {
         }
     }
 
-    return (this.game.rnd.integerInRange(0, 3));
+    return (this.game.rnd.integerInRange(0, 4));
 };
 
 Continent.prototype.evaluateTarget = function() {
