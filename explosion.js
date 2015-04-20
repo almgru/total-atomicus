@@ -7,6 +7,7 @@ var Explosion = function(game, x, y, id, lifeSpan) {
     Phaser.Sprite.call(this, game, x, y, id);
 
     this.killTime = this.game.time.now + lifeSpan;
+    this.anchor.setTo(0.5, 0.5);
 };
 
 Explosion.prototype = Object.create(Phaser.Sprite.prototype);

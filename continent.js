@@ -9,48 +9,101 @@ var Continent = function(game, x, y, id, name, hp) {
     this.name = name;
     this.atk = 1;
     this.cities = 1;
-    //this.text = this.game.add.text(x + this.width / 2, y + this.height / 2, "HP: " + this.hp + "\nAtk: " +
-    //    this.atk + "\nCities: " + this.cities,
-    //    {font: "14px monospace", fill: "#000", align: "center"});
-    //this.text.anchor.setTo(0.5, 0.5);
     this.aggressors = [];
+    this.target = this.game.add.sprite(x + this.width / 2, y + this.height / 2, "target");
+    this.target.anchor.setTo(0.5, 0.5);
+    this.target.visible = false;
+    this.targetCoordinates;
+    this.missileToLaunch = 0;
+    this.activeMissiles = [];
+    this.deadMissiles = [];
+    this.missileDelay = 50;
+    this.missileLaunchTime = 0;
 };
 
 Continent.prototype = Object.create(Phaser.Sprite.prototype);
 Continent.prototype.constructor = Continent;
 
 Continent.prototype.update = function() {
-    //this.text.bringToTop();
+    this.textbg.bringToTop();
+    this.text.bringToTop();
+    this.target.bringToTop();
+    if (this.upgradeText !== undefined)
+        this.upgradeText.bringToTop();
+    this.turnBorder.bringToTop();
+
+    //if (this.missileToLaunch > 0
+    //        && this.game.time.now > this.missileLaunchTime) {
+    //    var x = this.targetCoordinates.x + this.game.rnd.integerInRange(-25, 25);
+    //    var y = this.targetCoordinates.y + this.game.rnd.integerInRange(-25, 25);
+    //
+    //    this.missileToLaunch--;
+    //    this.missileLaunchTime = this.game.time.now + this.missileDelay;
+    //    this.activeMissiles.push(this.game.add.sprite(new Missile(this.game,
+    //        this.x + this.width / 2, this.y + this.height / 2, "missile", x, y)));
+    //}
+    //
+    //for (var i = 0; i < this.activeMissiles.length; i++) {
+    //    if (this.activeMissiles[i].isKilled) {
+    //        this.deadMissiles.push(this.activeMissiles[i]);
+    //    }
+    //}
+    //
+    //for (var i = 0; i < this.deadMissiles.length; i++) {
+    //    this.activeMissiles.splice(i, 1);
+    //    this.deadMissiles[i].destroy();
+    //}
+    //
+    //this.deadMissiles = [];
 };
 
 Continent.prototype.attack = function(continent) {
+    if (this.isHuman()) {
+        this.readyMissiles(this.game.input.activePointer.x, this.game.input.activePointer.y);
+    }
+    else {
+        this.readyMissiles(this.targetCoordinates.x, this.targetCoordinates.y);
+    }
     console.log(this.name + " attacks " + continent.name + " for " + this.atk + " damage!");
     continent.hp -= this.atk;
     continent.addAggressor(this);
     continent.updateText();
-    var explosion = new Explosion(this.game, continent.x, continent.y, "explosion", 200);
+    var explosion = new Explosion(this.game, continent.x + continent.width / 2, continent.y + continent.height / 2, "explosion", 200);
     this.game.add.existing(explosion);
 
     if (continent.hp <= 0) {
         console.log(continent.name + " is destroyed!");
         continent.dead = true;
+        continent.text.destroy();
+        continent.textbg.destroy();
+        continent.target.destroy();
+        continent.turnBorder.destroy();
         continent.destroy();
     }
 };
 
 Continent.prototype.buildDefence = function() {
+    this.upgradeText = this.game.add.text(this.textbg.x + 60, this.textbg.y + 32, "+" + (1 + this.cities),
+        {font: "14px monospace", fill: "#0F0", align: "left"});
+    this.upgradeText.lifespan = 1500;
     this.hp += 1 + this.cities;
     console.log(this.name + " restores " + (1 + this.cities) + " hp!");
     this.updateText();
 };
 
 Continent.prototype.buildAttack = function() {
-    this.atk += this.cities;
+    this.upgradeText = this.game.add.text(this.textbg.x + 70, this.textbg.y + 56, "+" + Math.round(this.cities / 2),
+        {font: "14px monospace", fill: "#0F0", align: "left"});
+    this.upgradeText.lifespan = 1500;
+    this.atk += Math.round(this.cities / 2);
     console.log(this.name + " raises attack by " + this.cities + "!");
     this.updateText();
 };
 
 Continent.prototype.buildCity = function() {
+    this.upgradeText = this.game.add.text(this.textbg.x + 90, this.textbg.y + 79, "+1",
+        {font: "14px monospace", fill: "#0F0", align: "left"});
+    this.upgradeText.lifespan = 1500;
     this.cities++;
     console.log(this.name + " builds a city!");
     this.updateText();
@@ -79,7 +132,7 @@ Continent.prototype.doAIAction = function() {
 };
 
 Continent.prototype.updateText = function() {
-    //this.text.setText("HP: " + this.hp + "\nAtk: " + this.atk + "\nCities: " + this.cities);
+    this.text.setText(this.name + "\nHP: " + this.hp + "\nAtk: " + this.atk + "\nCities: " + this.cities);
 };
 
 Continent.prototype.isHuman = function() {
@@ -104,12 +157,12 @@ Continent.prototype.evaluateAction = function() {
         if (this === this.game.continents[i]
                 || this.game.continents[i].dead) {
             continue;
-        } else if (this.hp <= this.game.continents[i].atk
-                && this.game.rnd.integerInRange(0, 100) < 75) {
-            return 3;
         } else if (this.game.continents[i].hp <= this.atk
-            && this.game.rnd.integerInRange(0, 100) < 75) {
+            && this.game.rnd.integerInRange(0, 100) < 80) {
             return 0;
+        } else if (this.hp <= this.game.continents[i].atk
+                && this.game.rnd.integerInRange(0, 100) < 80) {
+            return 3;
         }
     }
 
@@ -143,15 +196,23 @@ Continent.prototype.evaluateTarget = function() {
     }
 
     if (hits === 1) {
-        return this.game.continents[lowestHPIndex];
+        var cont = this.game.continents[lowestHPIndex];
+        this.targetCoordinates = {x: cont.x + cont.width / 2, y: cont.x + cont.height / 2};
+        return cont;
     } else if (hits > 1) {
         if (aggressionIndex !== -1) {
-            return this.game.continents[aggressionIndex];
+            var cont = this.game.continents[aggressionIndex];
+            this.targetCoordinates = {x: cont.x + cont.width / 2, y: cont.x + cont.height / 2};
+            return cont;
         } else {
-            return this.selectRandomTarget();
+            var cont = this.selectRandomTarget();
+            this.targetCoordinates = {x: cont.x + cont.width / 2, y: cont.x + cont.height / 2};
+            return cont;
         }
     } else {
-        return this.selectRandomTarget();
+        var cont = this.selectRandomTarget();
+        this.targetCoordinates = {x: cont.x + cont.width / 2, y: cont.x + cont.height / 2};
+        return cont;
     }
 };
 
@@ -173,4 +234,21 @@ Continent.prototype.aggressorIndexOf = function(continent) {
     }
 
     return -1;
+};
+
+Continent.prototype.readyMissiles = function(targetX, targetY) {
+    this.targetCoordinates = {x: targetX, y: targetY};
+    this.missileToLaunch = this.atk;
+};
+
+Continent.prototype.setInfo = function(offSetX, offSetY) {
+    this.textbg = this.game.add.sprite(this.x + offSetX, this.y + offSetY, "textbg");
+    this.textbg.alpha = 0.75;
+    this.textbg.scale = new Phaser.Point(0.85, 0.7);
+    this.text = this.game.add.text(this.x + 10 + offSetX, this.y + 10 + offSetY, this.name + "\nHP: " + this.hp + "\nAtk: " +
+        this.atk + "\nCities: " + this.cities,
+        {font: "14px monospace", fill: "#000", align: "left"});
+    this.turnBorder = this.game.add.sprite(this.textbg.x, this.textbg.y, "turnborder");
+    this.turnBorder.scale = new Phaser.Point(0.85, 0.7);
+    this.turnBorder.visible = false;
 };

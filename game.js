@@ -14,16 +14,26 @@ LDGame.Game.prototype = {
 
     create: function() {
         this.ocean = this.add.sprite(0, 0, "ocean");
-        this.ui = this.add.sprite(0, 500, "ui_bar").tint = 0x808080;
+        this.add.sprite(0, 500, "ui_bar").tint = 0x808080;
+
+        this.add.text(105, 500, "Launch missile", { font: "12px monospace", fill: "#fff" });
+        this.add.text(286, 500, "Upgrade attack", { font: "12px monospace", fill: "#fff" });
+        this.add.text(450, 500, "Restore defences", { font: "12px monospace", fill: "#fff" });
+        this.add.text(614, 500, "Build factory", { font: "12px monospace", fill: "#fff" });
 
         this.launchReady = false;
 
         this.continents = [];
         this.continents.push(new Continent(this, 10, 50, "northamericaimg", "north america", 3));
+        this.continents[0].setInfo(-10, -50);
         this.continents.push(new Continent(this, 400, 50, "europeimg", "europe", 3));
+        this.continents[1].setInfo(-50, -50);
         this.continents.push(new Continent(this, 509, 50, "asiaimg", "asia", 3));
+        this.continents[2].setInfo(120, 150);
         this.continents.push(new Continent(this, 346, 216, "africaimg", "africa", 3));
+        this.continents[3].setInfo(-50, 75);
         this.continents.push(new Continent(this, 160, 250, "southamericaimg", "south america", 3));
+        this.continents[4].setInfo(-120, 50);
         for (var i = 0; i < this.continents.length; i++) {
             this.continents[i].inputEnabled = true;
             this.continents[i].events.onInputDown.add(this.onDown, this);
@@ -42,23 +52,30 @@ LDGame.Game.prototype = {
         this.buttons[0].events.onInputDown.add(function () {
             if (this.activePlayer.isHuman()) {
                 this.launchReady = true;
+                this.showTargets();
                 console.log("Preparing missle launch. Select target.");
             }
         }, this);
         this.buttons[1].events.onInputDown.add(function () {
             if (this.activePlayer.isHuman()) {
+                this.hideTargets();
+                this.launchReady = false;
                 this.activePlayer.buildAttack();
                 this.nextPlayer();
             }
         }, this);
         this.buttons[2].events.onInputDown.add(function () {
             if (this.activePlayer.isHuman()) {
+                this.launchReady = false;
+                this.hideTargets();
                 this.activePlayer.buildDefence();
                 this.nextPlayer();
             }
         }, this);
         this.buttons[3].events.onInputDown.add(function () {
             if (this.activePlayer.isHuman()) {
+                this.launchReady = false;
+                this.hideTargets();
                 this.activePlayer.buildCity();
                 this.nextPlayer();
             }
@@ -80,22 +97,11 @@ LDGame.Game.prototype = {
     },
 
     update: function() {
-        if (this.activePlayer.isHuman()) {
+        if (!this.activePlayer.isHuman()) {
 
-            if (this.input.keyboard.isDown(Phaser.Keyboard.A)) {
-                this.activePlayer.buildAttack();
-                this.nextPlayer();
-            }
-
-            else if (this.input.keyboard.isDown(Phaser.Keyboard.D)) {
-                this.activePlayer.buildDefence();
-                this.nextPlayer();
-            }
-        }
-
-        else {
-
-            if (this.time.now > this.delay) {
+            if (this.time.now > this.delay
+                    && this.activePlayer.activeMissiles.length === 0
+                    && this.activePlayer.deadMissiles.length === 0) {
                 this.activePlayer.doAIAction();
                 this.nextPlayer();
             }
@@ -108,14 +114,17 @@ LDGame.Game.prototype = {
 
     onDown: function(sprite) {
         if (this.activePlayer.isHuman()
-                && this.launchReady) {
+                && this.launchReady
+                && sprite !== this.activePlayer) {
             this.activePlayer.attack(sprite);
+            this.hideTargets();
             this.launchReady = false;
             this.nextPlayer();
         }
     },
 
     nextPlayer: function() {
+        this.activePlayer.turnBorder.visible = false;
         do {
             this.activePlayerIndex++;
 
@@ -127,6 +136,21 @@ LDGame.Game.prototype = {
         } while (this.activePlayer.dead);
 
         this.delay = this.time.now + 1500;
+        this.activePlayer.turnBorder.visible = true;
         console.log(this.activePlayer.name + "'s turn." + (this.activePlayer.isHuman() ? " (Player)" : ""));
+    },
+
+    showTargets: function() {
+        for (var i = 0; i < this.continents.length; i++) {
+            if (this.continents[i] !== this.activePlayer) {
+                this.continents[i].target.visible = true;
+            }
+        }
+    },
+
+    hideTargets: function() {
+        for (var i = 0; i < this.continents.length; i++) {
+            this.continents[i].target.visible = false;
+        }
     }
 };
