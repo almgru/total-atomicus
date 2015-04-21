@@ -27,6 +27,8 @@ var Continent = function(game, x, y, id, name, hp) {
     this.cities = 1;
     this.aggressors = [];
     this.target = this.game.add.sprite(x + this.width / 2, y + this.height / 2, "target");
+    this.target.inputEnabled = true;
+    this.target.events.onInputDown.add(this.onDown, this.game);
     this.target.anchor.setTo(0.5, 0.5);
     this.target.visible = false;
     this.targetCoordinates;
@@ -297,4 +299,16 @@ Continent.prototype.onDead = function(attacker) {
     this.target.destroy();
     this.turnBorder.destroy();
     this.destroy();
+};
+
+Continent.prototype.onDown = function(sprite) {
+    if (this.activePlayer.isHuman()
+            && this.launchReady
+            && sprite !== this.activePlayer.target) {
+        console.log("hello");
+        this.activePlayer.attack(this.getTargetParent(sprite));
+        this.hideTargets();
+        this.launchReady = false;
+        this.nextPlayer();
+    }
 };

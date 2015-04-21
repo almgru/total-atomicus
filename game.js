@@ -50,8 +50,6 @@ LDGame.Game.prototype = {
         this.continents.push(new Continent(this, 160, 250, "southamericaimg", "South America", 3));
         this.continents[4].setInfo(-120, 50);
         for (var i = 0; i < this.continents.length; i++) {
-            this.continents[i].inputEnabled = true;
-            this.continents[i].events.onInputDown.add(this.onDown, this);
             this.add.existing(this.continents[i]);
         }
 
@@ -125,7 +123,8 @@ LDGame.Game.prototype = {
         } else if (this.hasWon) {
             this.winText.bringToTop();
 
-            if (this.input.activePointer.isDown) {
+            if (this.input.activePointer.isDown
+                    && this.time.now > this.inputDelay) {
                 this.hasWon = false;
                 this.state.start("Menu");
             }
@@ -134,17 +133,6 @@ LDGame.Game.prototype = {
 
     render: function() {
 
-    },
-
-    onDown: function(sprite) {
-        if (this.activePlayer.isHuman()
-                && this.launchReady
-                && sprite !== this.activePlayer) {
-            this.activePlayer.attack(sprite);
-            this.hideTargets();
-            this.launchReady = false;
-            this.nextPlayer();
-        }
     },
 
     nextPlayer: function() {
@@ -199,7 +187,19 @@ LDGame.Game.prototype = {
             "Click/Touch to go back to menu.",
             { font: "22px monospace", fill: "#fff" });
         this.winText.anchor.setTo(0.5, 0.5);
+        this.inputDelay = this.time.now + 200;
 
         return true;
+    },
+
+    getTargetParent: function(target) {
+    for (var i = 0; i < this.continents.length; i++) {
+        if (target === this.continents[i].target) {
+            return this.continents[i];
+        }
+    }
+
+    console.log("Could not get parent");
+    return undefined;
     }
 };
