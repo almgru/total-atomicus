@@ -29,12 +29,12 @@ LDGame.Game.prototype = {
 
     create: function() {
         this.ocean = this.add.sprite(0, 0, "ocean");
-        this.add.sprite(0, 500, "ui_bar").tint = 0x808080;
+        this.add.sprite(0, 480, "ui_bar").alpha = 0.9;
 
-        this.add.text(105, 500, "Launch missile", { font: "12px monospace", fill: "#fff" });
-        this.add.text(286, 500, "Upgrade attack", { font: "12px monospace", fill: "#fff" });
-        this.add.text(450, 500, "Restore defences", { font: "12px monospace", fill: "#fff" });
-        this.add.text(614, 500, "Build factory", { font: "12px monospace", fill: "#fff" });
+        this.add.text(102, 494, "Launch missiles", { font: "12px monospace", fill: "#fff" });
+        this.add.text(276, 494, "Buy missiles", { font: "12px monospace", fill: "#fff" });
+        this.add.text(427, 494, "Upgrade defences", { font: "12px monospace", fill: "#fff" });
+        this.add.text(600, 494, "Build factory", { font: "12px monospace", fill: "#fff" });
 
         this.launchReady = false;
 
@@ -113,10 +113,7 @@ LDGame.Game.prototype = {
     update: function() {
         if (!this.activePlayer.isHuman()
                 && !this.hasWon) {
-
-            if (this.time.now > this.delay
-                    && this.activePlayer.activeMissiles.length === 0
-                    && this.activePlayer.deadMissiles.length === 0) {
+            if (this.time.now > this.delay) {
                 this.activePlayer.doAIAction();
                 this.nextPlayer();
             }
@@ -125,8 +122,7 @@ LDGame.Game.prototype = {
 
             if (this.input.activePointer.isDown
                     && this.time.now > this.inputDelay) {
-                this.hasWon = false;
-                this.state.start("Menu");
+                this.reset();
             }
         }
     },
@@ -201,5 +197,11 @@ LDGame.Game.prototype = {
 
     console.log("Could not get parent");
     return undefined;
+    },
+
+    reset: function() {
+        this.game.players = [];
+        this.hasWon = false;
+        this.state.start("Menu");
     }
 };

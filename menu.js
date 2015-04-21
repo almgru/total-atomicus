@@ -26,9 +26,11 @@ LDGame.Menu.prototype = {
 
     create: function() {
         this.add.sprite(0, 0, "menubg");
+        this.add.sprite(143, 120, "titlebg").alpha = 0.6;
         this.add.text(this.game.width / 2, this.game.height / 4,
             "Total Atomicus", { font: "42px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
-
+        this.add.text(this.game.width / 2, this.game.height / 4 + 50,
+            "Made by Daniel Alm Grundström, LinkPact Games", { font: "18px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
 
         this.singlePlayerButton = this.add.button(this.game.width / 2, this.game.height / 2, "menubutton",
             this.singlePlayer, this, 0, 0, 1);

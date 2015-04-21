@@ -33,9 +33,17 @@ LDGame.MultiplayerSetup.prototype = {
 
         this.startButton = undefined;
 
+        this.backButton = this.add.button(this.game.width / 2 - 240, this.game.height / 2 + 60, "menubutton",
+            function() {
+                this.game.players = [];
+                this.state.start("Menu");
+            }, this, 0, 0, 1);
+        this.backButton.anchor.setTo(0.5, 0.5);
+        this.add.text(this.game.width / 2 - 240, this.game.height / 2 + 61,
+            "Back", { font: "12px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
+
         this.africaButton = this.add.button(this.game.width / 2, this.game.height / 2 - 60, "menubutton",
-            function()
-            {
+            function() {
                 this.game.players.push("Africa");
                 this.africaButton.inputEnabled = false;
                 this.updateText(-60);
@@ -108,7 +116,7 @@ LDGame.MultiplayerSetup.prototype = {
 
         this.add.text(this.game.width / 2 + 110, this.game.height / 2 + y,
             "(Player " + (this.game.players.length) + ")", {
-                font: "12px monospace",
+                font: "14px monospace",
                 fill: "#fff"
             }).anchor.setTo(0.5, 0.5);
 
