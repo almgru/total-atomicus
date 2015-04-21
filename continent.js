@@ -25,12 +25,16 @@ Continent.prototype = Object.create(Phaser.Sprite.prototype);
 Continent.prototype.constructor = Continent;
 
 Continent.prototype.update = function() {
-    this.textbg.bringToTop();
-    this.text.bringToTop();
-    this.target.bringToTop();
-    if (this.upgradeText !== undefined)
-        this.upgradeText.bringToTop();
-    this.turnBorder.bringToTop();
+    if (!this.game.hasWon) {
+        this.textbg.bringToTop();
+        this.defenceText.bringToTop();
+        this.missileText.bringToTop();
+        this.factoryText.bringToTop();
+        this.target.bringToTop();
+        this.turnBorder.bringToTop();
+        if (this.upgradeText !== undefined)
+            this.upgradeText.bringToTop();
+    }
 
     //if (this.missileToLaunch > 0
     //        && this.game.time.now > this.missileLaunchTime) {
@@ -65,50 +69,51 @@ Continent.prototype.attack = function(continent) {
         this.readyMissiles(this.targetCoordinates.x, this.targetCoordinates.y);
     }
     console.log(this.name + " attacks " + continent.name + " for " + this.atk + " damage!");
+    continent.upgradeText = this.game.add.text(continent.textbg.x + 85, continent.textbg.y + 13, "-" + this.atk,
+        {font: "22px monospace", fill: "#f00", align: "left"});
+    continent.upgradeText.lifespan = 1500;
     continent.hp -= this.atk;
     continent.addAggressor(this);
     continent.updateText();
-    var explosion = this.game.add.sprite(continent.x + continent.width / 2, continent.y + continent.height / 2, "explosion");
-    explosion.lifespan = 600;
-    explosion.animations.add("explode");
-    explosion.anchor.setTo(0.5, 0.5);
-    explosion.animations.play("explode", 10, false);
+    for (var i = 0; i < this.atk; i++) {
+        var x = continent.x + continent.width / 2 + this.game.rnd.integerInRange(-50, 50);
+        var y = continent.y + continent.height / 2 + this.game.rnd.integerInRange(-50, 50);
+        var explosion = this.game.add.sprite(x, y, "explosion");
+        explosion.lifespan = 600;
+        explosion.animations.add("explode");
+        explosion.anchor.setTo(0.5, 0.5);
+        explosion.animations.play("explode", 10, false);
+    }
 
     if (continent.hp <= 0) {
-        console.log(continent.name + " is destroyed!");
-        continent.dead = true;
-        continent.text.destroy();
-        continent.textbg.destroy();
-        continent.target.destroy();
-        continent.turnBorder.destroy();
-        continent.destroy();
+        continent.onDead(this);
     }
 };
 
 Continent.prototype.buildDefence = function() {
-    this.upgradeText = this.game.add.text(this.textbg.x + 60, this.textbg.y + 32, "+" + (1 + this.cities),
-        {font: "14px monospace", fill: "#0F0", align: "left"});
+    this.upgradeText = this.game.add.text(this.textbg.x + 85, this.textbg.y + 13, "+" + (1 + this.cities),
+        {font: "22px monospace", fill: "#0F0", align: "left"});
     this.upgradeText.lifespan = 1500;
     this.hp += 1 + this.cities;
-    console.log(this.name + " restores " + (1 + this.cities) + " hp!");
+    console.log(this.name + " restores " + (1 + this.cities) + " shelters!");
     this.updateText();
 };
 
 Continent.prototype.buildAttack = function() {
-    this.upgradeText = this.game.add.text(this.textbg.x + 70, this.textbg.y + 56, "+" + Math.round(this.cities / 2),
-        {font: "14px monospace", fill: "#0F0", align: "left"});
+    this.upgradeText = this.game.add.text(this.textbg.x + 85, this.textbg.y + 53, "+" + Math.round(this.cities / 2),
+        {font: "22px monospace", fill: "#0F0", align: "left"});
     this.upgradeText.lifespan = 1500;
     this.atk += Math.round(this.cities / 2);
-    console.log(this.name + " raises attack by " + this.cities + "!");
+    console.log(this.name + " builds " + this.cities + " missiles!");
     this.updateText();
 };
 
 Continent.prototype.buildCity = function() {
-    this.upgradeText = this.game.add.text(this.textbg.x + 90, this.textbg.y + 79, "+1",
-        {font: "14px monospace", fill: "#0F0", align: "left"});
+    this.upgradeText = this.game.add.text(this.textbg.x + 85, this.textbg.y + 93, "+1",
+        {font: "22px monospace", fill: "#0F0", align: "left"});
     this.upgradeText.lifespan = 1500;
     this.cities++;
-    console.log(this.name + " builds a city!");
+    console.log(this.name + " builds a factory!");
     this.updateText();
 };
 
@@ -136,7 +141,9 @@ Continent.prototype.doAIAction = function() {
 };
 
 Continent.prototype.updateText = function() {
-    this.text.setText(this.name + "\nHP: " + this.hp + "\nAtk: " + this.atk + "\nCities: " + this.cities);
+    this.defenceText.setText(this.hp);
+    this.missileText.setText(this.atk);
+    this.factoryText.setText(this.cities);
 };
 
 Continent.prototype.isHuman = function() {
@@ -248,11 +255,30 @@ Continent.prototype.readyMissiles = function(targetX, targetY) {
 Continent.prototype.setInfo = function(offSetX, offSetY) {
     this.textbg = this.game.add.sprite(this.x + offSetX, this.y + offSetY, "textbg");
     this.textbg.alpha = 0.75;
-    this.textbg.scale = new Phaser.Point(0.85, 0.7);
-    this.text = this.game.add.text(this.x + 10 + offSetX, this.y + 10 + offSetY, this.name + "\nHP: " + this.hp + "\nAtk: " +
-        this.atk + "\nCities: " + this.cities,
-        {font: "14px monospace", fill: "#000", align: "left"});
+    this.defenceText = this.game.add.text(this.x + 60 + offSetX, this.y + 13 + offSetY, this.hp,
+        {font: "22px monospace", fill: "#000", align: "left"});
+    this.missileText = this.game.add.text(this.x + 60 + offSetX, this.y + 53 + offSetY, this.atk,
+        {font: "22px monospace", fill: "#000", align: "left"});
+    this.factoryText = this.game.add.text(this.x + 60 + offSetX, this.y + 93 + offSetY, this.cities,
+        {font: "22px monospace", fill: "#000", align: "left"});
     this.turnBorder = this.game.add.sprite(this.textbg.x, this.textbg.y, "turnborder");
-    this.turnBorder.scale = new Phaser.Point(0.85, 0.7);
     this.turnBorder.visible = false;
+};
+
+Continent.prototype.onDead = function(attacker) {
+    attacker.cities += 2;
+    attacker.upgradeText = this.game.add.text(attacker.textbg.x + 85, attacker.textbg.y + 93, "+2",
+        {font: "22px monospace", fill: "#0F0", align: "left"});
+    attacker.upgradeText.lifespan = 1500;
+    attacker.updateText();
+    console.log(this.name + " is destroyed!");
+    this.dead = true;
+    this.upgradeText.destroy();
+    this.defenceText.destroy();
+    this.missileText.destroy();
+    this.factoryText.destroy();
+    this.textbg.destroy();
+    this.target.destroy();
+    this.turnBorder.destroy();
+    this.destroy();
 };

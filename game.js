@@ -94,16 +94,25 @@ LDGame.Game.prototype = {
         this.activePlayerIndex = this.rnd.integerInRange(0, this.continents.length -1);
         this.activePlayer = this.continents[this.activePlayerIndex];
         this.nextPlayer();
+        this.hasWon = false;
     },
 
     update: function() {
-        if (!this.activePlayer.isHuman()) {
+        if (!this.activePlayer.isHuman()
+                && !this.hasWon) {
 
             if (this.time.now > this.delay
                     && this.activePlayer.activeMissiles.length === 0
                     && this.activePlayer.deadMissiles.length === 0) {
                 this.activePlayer.doAIAction();
                 this.nextPlayer();
+            }
+        } else if (this.hasWon) {
+            this.winText.bringToTop();
+
+            if (this.input.activePointer.isDown) {
+                this.hasWon = false;
+                this.state.start("Menu");
             }
         }
     },
@@ -124,20 +133,25 @@ LDGame.Game.prototype = {
     },
 
     nextPlayer: function() {
-        this.activePlayer.turnBorder.visible = false;
-        do {
-            this.activePlayerIndex++;
+        if (this.checkWinningConditions() === true) {
+            this.hasWon = true;
+        }
+        else {
+            this.activePlayer.turnBorder.visible = false;
+            do {
+                this.activePlayerIndex++;
 
-            if (this.activePlayerIndex > this.continents.length - 1) {
-                this.activePlayerIndex = 0;
-            }
+                if (this.activePlayerIndex > this.continents.length - 1) {
+                    this.activePlayerIndex = 0;
+                }
 
-            this.activePlayer = this.continents[this.activePlayerIndex];
-        } while (this.activePlayer.dead);
+                this.activePlayer = this.continents[this.activePlayerIndex];
+            } while (this.activePlayer.dead);
 
-        this.delay = this.time.now + 1500;
-        this.activePlayer.turnBorder.visible = true;
-        console.log(this.activePlayer.name + "'s turn." + (this.activePlayer.isHuman() ? " (Player)" : ""));
+            this.delay = this.time.now + 1500;
+            this.activePlayer.turnBorder.visible = true;
+            console.log(this.activePlayer.name + "'s turn." + (this.activePlayer.isHuman() ? " (Player)" : ""));
+        }
     },
 
     showTargets: function() {
@@ -152,5 +166,25 @@ LDGame.Game.prototype = {
         for (var i = 0; i < this.continents.length; i++) {
             this.continents[i].target.visible = false;
         }
+    },
+
+    checkWinningConditions: function() {
+        var deadCount = 0;
+        for (var i = 0; i < this.continents.length; i++) {
+            if (this.continents[i].dead) {
+                deadCount++;
+            }
+        }
+
+        if (deadCount < 4) {
+            return false;
+        }
+
+        this.winText = this.add.text(this.game.width / 2, this.game.height / 2, this.activePlayer.name + " has won!\n" +
+            "Click/Touch to go back to menu.",
+            { font: "22px monospace", fill: "#fff" });
+        this.winText.anchor.setTo(0.5, 0.5);
+
+        return true;
     }
 };
