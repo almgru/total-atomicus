@@ -48,6 +48,7 @@ LDGame.Preloader.prototype = {
         this.load.image("target", "assets/target.png");
         this.load.audio("explosion", "assets/explosion.wav");
         this.load.audio("powerup", "assets/powerup.wav");
+        this.load.spritesheet("mutebutton", "assets/mute.png", 48, 48);
     },
 
     create: function() {

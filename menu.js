@@ -30,7 +30,7 @@ LDGame.Menu.prototype = {
         this.add.text(this.game.width / 2, this.game.height / 4,
             "Total Atomicus", { font: "42px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
         this.add.text(this.game.width / 2, this.game.height / 4 + 50,
-            "Made by Daniel Alm Grundström, LinkPact Games", { font: "18px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
+            "Made by Daniel Alm Grundström - LinkPact Games", { font: "18px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
 
         this.singlePlayerButton = this.add.button(this.game.width / 2, this.game.height / 2, "menubutton",
             this.singlePlayer, this, 0, 0, 1);
@@ -43,6 +43,9 @@ LDGame.Menu.prototype = {
         this.multiPlayerButton.anchor.setTo(0.5, 0.5);
         this.add.text(this.game.width / 2, this.game.height / 2 + 81,
             "Multiplayer", { font: "12px monospace", fill: "#fff" }).anchor.setTo(0.5, 0.5);
+
+        this.muteButton = this.add.button(this.game.width - 58 , 10, "mutebutton", this.toggleMute, this);
+        this.muteButton.frame = 0;
     },
 
     update: function() {
@@ -55,5 +58,15 @@ LDGame.Menu.prototype = {
 
     multiplayer: function() {
         this.state.start("Multiplayer");
+    },
+
+    toggleMute: function() {
+        this.game.playAudio = !this.game.playAudio;
+
+        if (this.game.playAudio) {
+            this.muteButton.frame = 0;
+        } else {
+            this.muteButton.frame = 1;
+        }
     }
 };

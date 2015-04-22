@@ -60,7 +60,11 @@ Continent.prototype.attack = function(continent) {
     continent.hp -= this.atk;
     continent.addAggressor(this);
     continent.updateText();
-    this.explosionSound.play();
+
+    if (this.game.game.playAudio) {
+        this.explosionSound.play();
+    }
+
     for (var i = 0; i < this.atk; i++) {
         var x = continent.x + continent.width / 2 + this.game.rnd.integerInRange(-50, 50);
         var y = continent.y + continent.height / 2 + this.game.rnd.integerInRange(-50, 50);
@@ -83,7 +87,9 @@ Continent.prototype.buildDefence = function() {
     this.hp += this.factories;
     console.log(this.name + " restores " + this.factories + " shelters!");
     this.updateText();
-    this.powerUpSound.play();
+    if (this.game.game.playAudio) {
+        this.powerUpSound.play();
+    }
 };
 
 Continent.prototype.buildAttack = function() {
@@ -93,7 +99,9 @@ Continent.prototype.buildAttack = function() {
     this.atk += Math.round(this.factories / 2);
     console.log(this.name + " builds " + this.factories + " missiles!");
     this.updateText();
-    this.powerUpSound.play();
+    if (this.game.game.playAudio) {
+        this.powerUpSound.play();
+    }
 };
 
 Continent.prototype.buildCity = function() {
@@ -103,7 +111,9 @@ Continent.prototype.buildCity = function() {
     this.factories++;
     console.log(this.name + " builds a factory!");
     this.updateText();
-    this.powerUpSound.play();
+    if (this.game.game.playAudio) {
+        this.powerUpSound.play();
+    }
 };
 
 Continent.prototype.doAIAction = function() {

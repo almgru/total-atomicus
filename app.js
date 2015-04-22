@@ -22,6 +22,7 @@ window.onload = function() {
     var game = new Phaser.Game(800, 600, Phaser.AUTO, "gamecontainer");
 
     game.players = [];
+    game.playAudio = true;
 
     game.state.add("Boot", LDGame.Boot);
     game.state.add("Preloader", LDGame.Preloader);

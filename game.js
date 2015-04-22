@@ -29,12 +29,9 @@ LDGame.Game.prototype = {
 
     create: function() {
         this.ocean = this.add.sprite(0, 0, "ocean");
-        this.add.sprite(0, 480, "ui_bar").alpha = 0.9;
-
-        this.add.text(102, 494, "Launch missiles", { font: "12px monospace", fill: "#fff" });
-        this.add.text(276, 494, "Buy missiles", { font: "12px monospace", fill: "#fff" });
-        this.add.text(427, 494, "Upgrade defences", { font: "12px monospace", fill: "#fff" });
-        this.add.text(600, 494, "Build factory", { font: "12px monospace", fill: "#fff" });
+        this.ui = new UI(this, 0, 480, "ui_bar");
+        this.add.existing(this.ui);
+        this.ui.createButtons();
 
         this.launchReady = false;
 
@@ -53,47 +50,6 @@ LDGame.Game.prototype = {
             this.add.existing(this.continents[i]);
         }
 
-        this.buttons = [];
-        this.buttons.push(this.add.sprite(122, 520, "launchButton"));
-        this.buttons.push(this.add.sprite(286, 520, "missleUpgrade"));
-        this.buttons.push(this.add.sprite(450, 520, "defenceUpgrade"));
-        this.buttons.push(this.add.sprite(614, 520, "cityUpgrade"));
-        for (var i = 0; i < this.buttons.length; i++) {
-            this.buttons[i].inputEnabled = true;
-        }
-
-        this.buttons[0].events.onInputDown.add(function () {
-            if (this.activePlayer.isHuman()) {
-                this.launchReady = true;
-                this.showTargets();
-                console.log("Preparing missle launch. Select target.");
-            }
-        }, this);
-        this.buttons[1].events.onInputDown.add(function () {
-            if (this.activePlayer.isHuman()) {
-                this.hideTargets();
-                this.launchReady = false;
-                this.activePlayer.buildAttack();
-                this.nextPlayer();
-            }
-        }, this);
-        this.buttons[2].events.onInputDown.add(function () {
-            if (this.activePlayer.isHuman()) {
-                this.launchReady = false;
-                this.hideTargets();
-                this.activePlayer.buildDefence();
-                this.nextPlayer();
-            }
-        }, this);
-        this.buttons[3].events.onInputDown.add(function () {
-            if (this.activePlayer.isHuman()) {
-                this.launchReady = false;
-                this.hideTargets();
-                this.activePlayer.buildCity();
-                this.nextPlayer();
-            }
-        }, this);
-
         this.humanPlayers = [];
 
         for (var i = 0; i < this.game.players.length; i++) {
@@ -110,6 +66,13 @@ LDGame.Game.prototype = {
         this.hasWon = false;
         this.playersDead = false;
         this.deadHumanPlayers = 0;
+
+        this.muteButton = this.add.button(this.game.width - 58 , 10, "mutebutton", this.toggleMute, this);
+        if (this.game.playAudio) {
+            this.muteButton.frame = 0;
+        } else {
+            this.muteButton.frame = 1;
+        }
     },
 
     update: function() {
@@ -198,7 +161,9 @@ LDGame.Game.prototype = {
             return false;
         }
 
-        this.playersDeadText.destroy();
+        if (this.playersDeadText !== undefined) {
+            this.playersDeadText.destroy();
+        }
         this.winText = this.add.text(this.game.width / 2, (this.game.height - 120) / 2, this.activePlayer.name + " has won!\n" +
             "Click/Touch to go back to menu.",
             { font: "22px monospace", fill: "#fff" });
@@ -229,5 +194,15 @@ LDGame.Game.prototype = {
         this.playersDead = false;
         this.hasWon = false;
         this.state.start("Menu");
+    },
+
+    toggleMute: function() {
+        this.game.playAudio = !this.game.playAudio;
+
+        if (this.game.playAudio) {
+            this.muteButton.frame = 0;
+        } else {
+            this.muteButton.frame = 1;
+        }
     }
 };
