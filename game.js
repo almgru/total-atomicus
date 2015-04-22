@@ -108,9 +108,20 @@ LDGame.Game.prototype = {
         this.activePlayer = this.continents[this.activePlayerIndex];
         this.nextPlayer();
         this.hasWon = false;
+        this.playersDead = false;
+        this.deadHumanPlayers = 0;
     },
 
     update: function() {
+        if (this.playersDead
+                && !this.hasWon) {
+            this.playersDeadText.bringToTop();
+
+            if (this.input.activePointer.isDown) {
+                this.reset();
+            }
+        }
+
         if (!this.activePlayer.isHuman()
                 && !this.hasWon) {
             if (this.time.now > this.delay) {
@@ -121,7 +132,7 @@ LDGame.Game.prototype = {
             this.winText.bringToTop();
 
             if (this.input.activePointer.isDown
-                    && this.time.now > this.inputDelay) {
+                && this.time.now > this.inputDelay) {
                 this.reset();
             }
         }
@@ -168,6 +179,14 @@ LDGame.Game.prototype = {
     },
 
     checkWinningConditions: function() {
+        if (this.allHumansDead()
+                && !this.playersDead) {
+            this.playersDead = true;
+            this.playersDeadText = this.add.text(this.game.width / 2, (this.game.height - 120) / 2, "All human players are dead!\nClick/Touch to go back to menu!",
+                { font: "22px monospace", fill: "#fff" });
+            this.playersDeadText.anchor.setTo(0.5, 0.5);
+        }
+
         var deadCount = 0;
         for (var i = 0; i < this.continents.length; i++) {
             if (this.continents[i].dead) {
@@ -179,7 +198,8 @@ LDGame.Game.prototype = {
             return false;
         }
 
-        this.winText = this.add.text(this.game.width / 2, this.game.height / 2, this.activePlayer.name + " has won!\n" +
+        this.playersDeadText.destroy();
+        this.winText = this.add.text(this.game.width / 2, (this.game.height - 120) / 2, this.activePlayer.name + " has won!\n" +
             "Click/Touch to go back to menu.",
             { font: "22px monospace", fill: "#fff" });
         this.winText.anchor.setTo(0.5, 0.5);
@@ -188,19 +208,25 @@ LDGame.Game.prototype = {
         return true;
     },
 
-    getTargetParent: function(target) {
-    for (var i = 0; i < this.continents.length; i++) {
-        if (target === this.continents[i].target) {
-            return this.continents[i];
-        }
-    }
+    allHumansDead: function() {
+        return (this.deadHumanPlayers === this.game.players.length);
+    },
 
-    console.log("Could not get parent");
-    return undefined;
+    getTargetParent: function(target) {
+        for (var i = 0; i < this.continents.length; i++) {
+            if (target === this.continents[i].target) {
+            return this.continents[i];
+            }
+        }
+
+        console.log("Could not get parent");
+        return undefined;
     },
 
     reset: function() {
         this.game.players = [];
+        this.deadHumanPlayers = 0;
+        this.playersDead = false;
         this.hasWon = false;
         this.state.start("Menu");
     }

@@ -24,7 +24,7 @@ var Continent = function(game, x, y, id, name, hp) {
     this.hp = hp;
     this.name = name;
     this.atk = 1;
-    this.cities = 1;
+    this.factories = 1;
     this.aggressors = [];
     this.target = this.game.add.sprite(x + this.width / 2, y + this.height / 2, "target");
     this.target.inputEnabled = true;
@@ -77,21 +77,21 @@ Continent.prototype.attack = function(continent) {
 };
 
 Continent.prototype.buildDefence = function() {
-    this.upgradeText = this.game.add.text(this.textbg.x + 85, this.textbg.y + 13, "+" + (1 + this.cities),
+    this.upgradeText = this.game.add.text(this.textbg.x + 85, this.textbg.y + 13, "+" + this.factories,
         {font: "22px monospace", fill: "#0F0", align: "left"});
     this.upgradeText.lifespan = 1500;
-    this.hp += 1 + this.cities;
-    console.log(this.name + " restores " + (1 + this.cities) + " shelters!");
+    this.hp += this.factories;
+    console.log(this.name + " restores " + this.factories + " shelters!");
     this.updateText();
     this.powerUpSound.play();
 };
 
 Continent.prototype.buildAttack = function() {
-    this.upgradeText = this.game.add.text(this.textbg.x + 85, this.textbg.y + 53, "+" + Math.round(this.cities / 2),
+    this.upgradeText = this.game.add.text(this.textbg.x + 85, this.textbg.y + 53, "+" + Math.round(this.factories / 2),
         {font: "22px monospace", fill: "#0F0", align: "left"});
     this.upgradeText.lifespan = 1500;
-    this.atk += Math.round(this.cities / 2);
-    console.log(this.name + " builds " + this.cities + " missiles!");
+    this.atk += Math.round(this.factories / 2);
+    console.log(this.name + " builds " + this.factories + " missiles!");
     this.updateText();
     this.powerUpSound.play();
 };
@@ -100,7 +100,7 @@ Continent.prototype.buildCity = function() {
     this.upgradeText = this.game.add.text(this.textbg.x + 85, this.textbg.y + 93, "+1",
         {font: "22px monospace", fill: "#0F0", align: "left"});
     this.upgradeText.lifespan = 1500;
-    this.cities++;
+    this.factories++;
     console.log(this.name + " builds a factory!");
     this.updateText();
     this.powerUpSound.play();
@@ -132,7 +132,7 @@ Continent.prototype.doAIAction = function() {
 Continent.prototype.updateText = function() {
     this.defenceText.setText(this.hp);
     this.missileText.setText(this.atk);
-    this.factoryText.setText(this.cities);
+    this.factoryText.setText(this.factories);
 };
 
 Continent.prototype.isHuman = function() {
@@ -243,19 +243,22 @@ Continent.prototype.setInfo = function(offSetX, offSetY) {
         {font: "22px monospace", fill: "#000", align: "left"});
     this.missileText = this.game.add.text(this.x + 60 + offSetX, this.y + 53 + offSetY, this.atk,
         {font: "22px monospace", fill: "#000", align: "left"});
-    this.factoryText = this.game.add.text(this.x + 60 + offSetX, this.y + 93 + offSetY, this.cities,
+    this.factoryText = this.game.add.text(this.x + 60 + offSetX, this.y + 93 + offSetY, this.factories,
         {font: "22px monospace", fill: "#000", align: "left"});
     this.turnBorder = this.game.add.sprite(this.textbg.x, this.textbg.y, "turnborder");
     this.turnBorder.visible = false;
 };
 
 Continent.prototype.onDead = function(attacker) {
-    attacker.cities += 2;
+    attacker.factories += 2;
     attacker.upgradeText = this.game.add.text(attacker.textbg.x + 85, attacker.textbg.y + 93, "+2",
         {font: "22px monospace", fill: "#0F0", align: "left"});
     attacker.upgradeText.lifespan = 1500;
     attacker.updateText();
     console.log(this.name + " is destroyed!");
+    if (this.isHuman()) {
+        this.game.deadHumanPlayers++;
+    }
     this.dead = true;
     this.upgradeText.destroy();
     this.defenceText.destroy();
