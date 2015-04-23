@@ -282,12 +282,12 @@ Continent.prototype.onDead = function(attacker) {
 
 Continent.prototype.onDown = function(sprite) {
     if (this.activePlayer.isHuman()
-            && this.launchReady
+            && this.ui.launchReady
             && sprite !== this.activePlayer.target) {
         console.log("hello");
         this.activePlayer.attack(this.getTargetParent(sprite));
-        this.hideTargets();
-        this.launchReady = false;
+        this.ui.hideTargets();
+        this.ui.launchReady = false;
         this.nextPlayer();
     }
 };

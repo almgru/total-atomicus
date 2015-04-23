@@ -34,7 +34,7 @@ LDGame.Boot.prototype = {
 
         } else {
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-            this.scale.setMinMax(320, 200, 800, 600);
+            this.scale.setMinMax(320, 200, 640, 480);
             this.scale.forceLandScape = true;
         }
 

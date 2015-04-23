@@ -23,59 +23,22 @@ LDGame.Game = function(game) {
 };
 
 LDGame.Game.prototype = {
-    preload: function() {
-
-    },
 
     create: function() {
-        this.ocean = this.add.sprite(0, 0, "ocean");
-        this.ui = new UI(this, 0, 480, "ui_bar");
-        this.add.existing(this.ui);
-        this.ui.createButtons();
+        this.add.sprite(0, 0, "ocean");
 
-        this.launchReady = false;
+        this.setupUI();
+        this.setupContinents();
+        this.setupPlayers();
+        this.setupSoundButton();
 
-        this.continents = [];
-        this.continents.push(new Continent(this, 10, 50, "northamericaimg", "North America", 3));
-        this.continents[0].setInfo(-10, -50);
-        this.continents.push(new Continent(this, 400, 50, "europeimg", "Europe", 3));
-        this.continents[1].setInfo(-50, -50);
-        this.continents.push(new Continent(this, 509, 50, "asiaimg", "Asia", 3));
-        this.continents[2].setInfo(120, 150);
-        this.continents.push(new Continent(this, 346, 216, "africaimg", "Africa", 3));
-        this.continents[3].setInfo(-50, 75);
-        this.continents.push(new Continent(this, 160, 250, "southamericaimg", "South America", 3));
-        this.continents[4].setInfo(-120, 50);
-        for (var i = 0; i < this.continents.length; i++) {
-            this.add.existing(this.continents[i]);
-        }
-
-        this.humanPlayers = [];
-
-        for (var i = 0; i < this.game.players.length; i++) {
-            for (var j = 0; j < this.continents.length; j++) {
-                if (this.game.players[i] === this.continents[j].name) {
-                    this.humanPlayers.push(this.continents[j]);
-                }
-            }
-        }
-
-        this.activePlayerIndex = this.rnd.integerInRange(0, this.continents.length -1);
-        this.activePlayer = this.continents[this.activePlayerIndex];
-        this.nextPlayer();
         this.hasWon = false;
         this.playersDead = false;
         this.deadHumanPlayers = 0;
-
-        this.muteButton = this.add.button(this.game.width - 58 , 10, "mutebutton", this.toggleMute, this);
-        if (this.game.playAudio) {
-            this.muteButton.frame = 0;
-        } else {
-            this.muteButton.frame = 1;
-        }
     },
 
     update: function() {
+        // All human players dead
         if (this.playersDead
                 && !this.hasWon) {
             this.playersDeadText.bringToTop();
@@ -91,7 +54,9 @@ LDGame.Game.prototype = {
                 this.activePlayer.doAIAction();
                 this.nextPlayer();
             }
-        } else if (this.hasWon) {
+        }
+        // A continent has won
+        else if (this.hasWon) {
             this.winText.bringToTop();
 
             if (this.input.activePointer.isDown
@@ -101,16 +66,13 @@ LDGame.Game.prototype = {
         }
     },
 
-    render: function() {
-
-    },
-
     nextPlayer: function() {
         if (this.checkWinningConditions() === true) {
             this.hasWon = true;
         }
         else {
             this.activePlayer.turnBorder.visible = false;
+
             do {
                 this.activePlayerIndex++;
 
@@ -124,20 +86,6 @@ LDGame.Game.prototype = {
             this.delay = this.time.now + 1500;
             this.activePlayer.turnBorder.visible = true;
             console.log(this.activePlayer.name + "'s turn." + (this.activePlayer.isHuman() ? " (Player)" : ""));
-        }
-    },
-
-    showTargets: function() {
-        for (var i = 0; i < this.continents.length; i++) {
-            if (this.continents[i] !== this.activePlayer) {
-                this.continents[i].target.visible = true;
-            }
-        }
-    },
-
-    hideTargets: function() {
-        for (var i = 0; i < this.continents.length; i++) {
-            this.continents[i].target.visible = false;
         }
     },
 
@@ -199,6 +147,54 @@ LDGame.Game.prototype = {
     toggleMute: function() {
         this.game.playAudio = !this.game.playAudio;
 
+        if (this.game.playAudio) {
+            this.muteButton.frame = 0;
+        } else {
+            this.muteButton.frame = 1;
+        }
+    },
+
+    setupUI: function() {
+        this.ui = new UI(this, 0, 480, "ui_bar");
+        this.add.existing(this.ui);
+        this.ui.createButtons();
+    },
+
+    setupContinents: function() {
+        this.continents = [];
+        this.continents.push(new Continent(this, 10, 50, "northamericaimg", "North America", 3));
+        this.continents[0].setInfo(-10, -50);
+        this.continents.push(new Continent(this, 400, 50, "europeimg", "Europe", 3));
+        this.continents[1].setInfo(-50, -50);
+        this.continents.push(new Continent(this, 509, 50, "asiaimg", "Asia", 3));
+        this.continents[2].setInfo(120, 150);
+        this.continents.push(new Continent(this, 346, 216, "africaimg", "Africa", 3));
+        this.continents[3].setInfo(-50, 75);
+        this.continents.push(new Continent(this, 160, 250, "southamericaimg", "South America", 3));
+        this.continents[4].setInfo(-120, 50);
+        for (var i = 0; i < this.continents.length; i++) {
+            this.add.existing(this.continents[i]);
+        }
+    },
+
+    setupPlayers: function() {
+        this.humanPlayers = [];
+
+        for (var i = 0; i < this.game.players.length; i++) {
+            for (var j = 0; j < this.continents.length; j++) {
+                if (this.game.players[i] === this.continents[j].name) {
+                    this.humanPlayers.push(this.continents[j]);
+                }
+            }
+        }
+
+        this.activePlayerIndex = this.rnd.integerInRange(0, this.continents.length -1);
+        this.activePlayer = this.continents[this.activePlayerIndex];
+        this.nextPlayer();
+    },
+
+    setupSoundButton: function() {
+        this.muteButton = this.add.button(this.game.width - 58 , 10, "mutebutton", this.toggleMute, this);
         if (this.game.playAudio) {
             this.muteButton.frame = 0;
         } else {
